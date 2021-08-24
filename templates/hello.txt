@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+
+  <body>
+
+<div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);max-width: 300px;margin: auto;text-align: center;">
+  
+  <h1>Welcome to Music Fiesta Fam!</h1>
+  <p class="title" style="color: #4B0082;font-size: 18px;">Music Night?</p>
+  <p>We are adding new songs every week, so there is always something great to listen to on Music Fiesta. We have got titles for everyone – action, comedy, family, classics and more
+    Enjoy songs hassle-free with Music Fiesta. There are no commitments. Start, pause and listen on your schedule. Plus, Music Fiesta is always advert-free</p>
+  <p><button style="border: none;outline: 0;display: inline-block;padding: 8px;color: white;background-color: #4B0082;text-align: center;cursor: pointer;width: 100%;font-size: 18px;">You can Contact us through this email!</button></p>
+</div>
+  </body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/dashboard.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/Header.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body>
+  <header>
+    <nav class="navbar navbar-dark navbar-expand-sm fixed-top">
+        <div class="container">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">
+                  <span class="navbar-toggler-icon"></span>  
+                </button>
+            <a class="navbar-brand mr-auto" href="#"><img src="{{ url_for('static',filename='images/Music_Fiesta.png') }}" height="50" width="41"></a>
+            <div class="collapse navbar-collapse" id="Navbar">
+               <ul class="navbar-nav mr auto">
+                <li class="nav-item"><a class="nav-link" href="/"><span class="fa fa-home fa-lg"> </span>Home</a></li> 
+                  <li class="nav-item"><a class="nav-link" href="/likedsonglist"><i class="fa fa-heart"></i> </span>  Liked Songs</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/allsonglist"><i class="fa fa-music"></i> </span>  Songs</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/search"><i class="fa fa-search"></i> </span>  Search</a></li>
+                  {% if current_user.is_authenticated %}
+                  <li class="nav-item"><a class="nav-link" href="/logout"><i class="fa fa-sign-out"></i> </span>  LogOut </a></li>
+                  {% endif %}
+                </ul>
+            </div>
+            <div>
+             <h1 style="color: white;"> Music Fiesta</h1>
+            </div>
+        </div>
+    </nav> 
+  </header>   
+<p><br></p>
+<p><br></p>
+<p><br></p>
+    <div class="player">
+        <div class="cover">
+            <img src="{{url_for('static', filename = 'Song/SongCover/' + song.cover_photo) }}" alt="">
+        </div>
+        <div class="info">
+            <div class="title">{{song.name}}</div>
+            <div class="singer">{{song.artist}}</div>
+        </div>
+        
+        <div class="volume-box">
+            <span class="volume-down"><i class="material-icons">remove</i></span>
+            <input type="range" class="volume-range" step="1" value="80" min="0" max="100"
+                oninput="music.volume = this.value/100">
+            <span class="volume-up"><i class="material-icons">add</i></span>
+        </div>
+        
+        <div class="music-box">
+          <div class="d-flex justify-content-around" style="justify-content: center;display: flex;">
+          
+            <div><form method="POST"><button id="vol-up" type="submit" formaction="/volup/{{song.id}}"><i class="fa fa-volume-up"style="font-size:38px"></i></button></form></div>
+            <div class="wishChkBox" style="text-align: center;">
+                <form name="Like-Form" method="POST">
+                  {% if liked_song %}
+                  <input type="checkbox" id="wish1" name="wish1" onclick="likefunc()" style="font-size:38px;" checked/>
+                  <label for="wish1"> </label>
+                  {% else %}
+                  <input type="checkbox" id="wish1" name="wish1" onclick="likefunc()" style="font-size:38px;"/>
+                  <label for="wish1"> </label>
+                  {% endif %}
+                </form>
+            </div>
+            <div><form method="POST"><button id="vol-down" type="submit" formaction="/voldown/{{song.id}}"><i class="fa fa-volume-down" style="font-size:38px;"></i></button></form></div>
+        </div>
+        <input id="progress" type="range" step="1" class="seekbar" value="0" min="0" max=100>
+
+            <audio class="music-element"  preload="metadata" autoplay controls muted style="display: none;" currentTime =  >
+                <source src="../../{{song.path}}" type="audio/mp3">
+            </audio>
+            <span class="currenttime">0:0</span><span class="duration">{{song.duration}}</span>
+            <div style="justify-content: center;display: flex;">
+              <form method="POST">
+                <button id="play" class="playy" type="submit" formaction="/unpause/{{song.id}}"  ><i class="fa fa-play-circle" style="font-size:38px"></i></button>
+                <button id="pause" type="submit" formaction="/pause/{{song.id}}"><i class="fa fa-pause-circle" style="font-size:38px;"></i></button>
+              </form>
+            </div>
+            
+        </div>
+    </div>
+
+</body>
+<script>
+  var music = document.querySelector('.music-element')
+  var duration = document.querySelector('.duration')
+  var seekbar = document.querySelector('.seekbar')
+var currentTime = document.querySelector('.current-time')
+  </script>
+<script>
+  // player
+// var music = document.querySelector('.music-element')
+// console.log("Music:",music)
+var playBtn = document.querySelector('.playy')
+var seekbar = document.querySelector('.seekbar')
+var currentTime = document.querySelector('.currenttime')
+console.log("Current time by flask in js:",currentTime)
+var duration = document.querySelector('.duration')
+console.log("Current time by flask in js:",duration)
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+
+var audio = document.querySelector('.music-element')
+var progress = document.getElementById('progress')
+var currentTime = document.querySelector('.currenttime')
+var duration = document.querySelector('.duration')
+
+audio.addEventListener('loadedmetadata', function() {
+    progress.max = audio.duration
+})
+
+audio.addEventListener('timeupdate', function() {
+    progress.value = audio.currentTime
+})
+
+progress.addEventListener('change', function() {
+   var seek = audio.duration * (progress.value / 100)
+   audio.currentTime = seek
+})
+
+progress.addEventListener('input', function() {
+  console.log('woo')
+})
+
+})
+
+
+
+
+music.onloadeddata = function () {
+    seekbar.max = music.duration
+    var ds = parseInt(music.duration % 60)
+    var dm = parseInt((music.duration / 60) % 60)
+    duration.innerHTML = dm + ':' + ds
+}
+music.ontimeupdate = function () { seekbar.value = music.currentTime }
+handleSeekBar = function () { music.currentTime = seekbar.value }
+music.addEventListener('timeupdate', function () {
+    var cs = parseInt(music.currentTime % 60)
+    var cm = parseInt((music.currentTime / 60) % 60)
+    currentTime.innerHTML = cm + ':' + cs
+}, false)
+
+
+
+
+
+  function likefunc()
+  {
+    const cb = document.getElementById('wish1');
+    console.log(cb.checked);
+    const URL = '/liked/{{current_user.id}}/{{song.id}}'
+    const xhr = new XMLHttpRequest();
+    sender = JSON.stringify(cb.checked)
+    xhr.open('POST', URL);
+    xhr.send(sender)
+
+  }
+  
+</script>
+<script type="text/javascript" src="../static/js/progress.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+</html>
