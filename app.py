@@ -13,6 +13,7 @@ import smtplib
 import imghdr
 from email.message import EmailMessage
 import datetime
+import os
 
 app = Flask(__name__)
 
@@ -95,18 +96,18 @@ def signup():
             db.session.add(new_user)
             db.session.commit()
 
-            msg = EmailMessage()
-            msg['Subject'] = 'Sucessfully Registered to Music Fiesta!'
-            msg['From'] = EMAIL_ADDRESS
-            msg['To'] = mail_id
-            msg.set_content('Thank you for Registering to Music Fiesta.')
+            # msg = EmailMessage()
+            # msg['Subject'] = 'Sucessfully Registered to Music Fiesta!'
+            # msg['From'] = EMAIL_ADDRESS
+            # msg['To'] = mail_id
+            # msg.set_content('Thank you for Registering to Music Fiesta.')
 
-            f = open("templates/hello.txt", "r")
-            msg.add_alternative(f.read(), subtype='html')
+            # f = open("templates/hello.txt", "r")
+            # msg.add_alternative(f.read(), subtype='html')
 
-            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-                smtp.send_message(msg)
+            # with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            #     smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            #     smtp.send_message(msg)
 
             flash("Sucessfully Registered!", "success")
             return redirect('/login')
@@ -263,7 +264,7 @@ def addsongs():
     return render_template('add_songs.html')
 
 
-@app.route('/play/<id>', methods=['POST'])
+@app.route('/play/<id>', methods=['POST', 'GET'])
 def play(id):
     mixer.init()
     song = Songs.query.filter_by(id=id).first()
@@ -347,6 +348,29 @@ def liked(user_id, song_id):
         pass
     url = f"/dashboard/{song_id}"
     return redirect(url)
+
+
+@app.route('/uploaddataset')
+def uploaddataset():
+    count = 0
+    for filename in os.listdir('Dataset\\Bollywood_Romantic'):
+        if filename.endswith(".mp3"):
+            name = filename.split(" - ")[1]
+            artist = filename.split(" - ")[0]
+            path = f'Dataset\\Bollywood_Romantic\{filename}'
+            coverphoto = url_for('static', filename='images/Card4.jpg')
+            audio = MP3(path)
+            audio_info = audio.info
+            length_in_secs = int(audio_info.length)
+            hours, mins, seconds = convert(length_in_secs)
+            duration = f"{mins}:{seconds}"
+            new_song = Songs(name=name, path=path, artist=artist,
+                             cover_photo=coverphoto, duration=duration)
+            db.session.add(new_song)
+            count = count+1
+    db.session.commit()
+    print("COUNT ", count)
+    return "DONE"
 
 
 if __name__ == "__main__":

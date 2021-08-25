@@ -41,7 +41,7 @@
 <p><br></p>
     <div class="player">
         <div class="cover">
-            <img src="{{url_for('static', filename = 'Song/SongCover/' + song.cover_photo) }}" alt="">
+            <img src="{{song.cover_photo}}" alt="">
         </div>
         <div class="info">
             <div class="title">{{song.name}}</div>
