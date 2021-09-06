@@ -34,6 +34,7 @@ class Songs(db.Model):
     name = db.Column(db.String(15), nullable=False)
     path = db.Column(db.String(100), nullable=False)
     artist = db.Column(db.String(15))
+    genre = db.Column(db.String(15))
     cover_photo = db.Column(db.String(100))
     duration = db.Column(db.String(100))
     likes = db.Column(db.Integer, default=0)
@@ -177,7 +178,7 @@ def dashboard(song_id):
 
 @app.route('/allsonglist', methods=['POST', 'GET'])
 def allsonglist():
-    songs = Songs.query.all()
+    songs = Songs.query.order_by(Songs.name.desc()).all()
     return render_template('allsonglist.html', songs=songs)
 
 
@@ -353,18 +354,19 @@ def liked(user_id, song_id):
 @app.route('/uploaddataset')
 def uploaddataset():
     count = 0
-    for filename in os.listdir('Dataset\\Bollywood_Romantic'):
+    for filename in os.listdir('Dataset\\bhajan'):
         if filename.endswith(".mp3"):
             name = filename.split(" - ")[1]
             artist = filename.split(" - ")[0]
-            path = f'Dataset\\Bollywood_Romantic\{filename}'
-            coverphoto = url_for('static', filename='images/Card4.jpg')
+            genre = "bhajan"
+            path = f'Dataset\\bhajan\{filename}'
+            coverphoto = url_for('static', filename='images/bhajan.jpeg')
             audio = MP3(path)
             audio_info = audio.info
             length_in_secs = int(audio_info.length)
             hours, mins, seconds = convert(length_in_secs)
             duration = f"{mins}:{seconds}"
-            new_song = Songs(name=name, path=path, artist=artist,
+            new_song = Songs(name=name, path=path, artist=artist, genre=genre,
                              cover_photo=coverphoto, duration=duration)
             db.session.add(new_song)
             count = count+1
