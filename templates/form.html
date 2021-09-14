@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="../static/css/Header.css">
+  <link rel="stylesheet" type="text/css" href="../static/css/form.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body>
+  <header>
+    <nav class="navbar navbar-dark navbar-expand-sm fixed-top">
+        <div class="container">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">
+                  <span class="navbar-toggler-icon"></span>  
+                </button>
+            <a class="navbar-brand mr-auto" href="#"><img src="{{ url_for('static',filename='images/Music_Fiesta.png') }}" height="50" width="41"></a>
+            <div class="collapse navbar-collapse" id="Navbar">
+               <ul class="navbar-nav mr auto">
+                <li class="nav-item"><a class="nav-link" href="/"><span class="fa fa-home fa-lg"> </span>Home</a></li> 
+                  <li class="nav-item"><a class="nav-link" href="/likedsonglist"><i class="fa fa-heart"></i> </span>  Liked Songs</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/allsonglist"><i class="fa fa-music"></i> </span>  Songs</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/search"><i class="fa fa-search"></i> </span>  Search</a></li>
+                  {% if current_user.is_authenticated %}
+                  <li class="nav-item"><a class="nav-link" href="/logout"><i class="fa fa-sign-out"></i> </span>  LogOut </a></li>
+                  {% endif %}
+                </ul>
+            </div>
+            <div>
+             <h1 style="color: white;"> Music Fiesta</h1>
+            </div>
+        </div>
+    </nav> 
+  </header>   
+  <p><br></p>
+   <p><br></p>
+    <p><br></p>
+    <p><br></p>
+    <div class="container">
+        
+        <div class="grid-wrapper grid-col-auto">
+          <label for="radio-card-1" class="radio-card">
+            <div class="card-content-wrapper">
+              <span class="check-icon">
+                <input type="checkbox" name="radio-card" id="radio-card-1"/>
+              </span>
+              <div class="card-content">               
+                <h4>Bollywood Rap</h4>
+                <h5>Get into the world of Bollywood Rap!</h5>
+              </div>
+            </div>
+          </label>
+          <!-- /.radio-card -->
+
+          <label for="radio-card-2" class="radio-card">
+            <div class="card-content-wrapper">
+                <span class="check-icon">
+                    <input type="checkbox" name="radio-card" id="radio-card-2"/>
+                </span>
+              <div class="card-content">
+                <h4>Bollywood Romantic</h4>
+                <h5>Lighten the mood!</h5>
+              </div>
+            </div>
+          </label>
+          <!-- /.radio-card -->
+        </div>
+        <div class="grid-wrapper grid-col-auto">
+            <label for="radio-card-3" class="radio-card">
+              <div class="card-content-wrapper">
+                <span class="check-icon">
+                    <input type="checkbox" name="radio-card" id="radio-card-3" />
+                  </span>
+                <div class="card-content">                 
+                  <h4>Sufi</h4>
+                  <h5>Perfect for All!</h5>
+                </div>
+              </div>
+            </label>
+            <!-- /.radio-card -->
+  
+            <label for="radio-card-4" class="radio-card">
+              <div class="card-content-wrapper">
+                <span class="check-icon">
+                    <input type="checkbox" name="radio-card" id="radio-card-4"/>
+                </span>
+                <div class="card-content">
+                  <h4> Garhwali</h4>
+                  <h5>Popularly known as Pahadi Music!</h5>
+                </div>
+              </div>
+            </label>
+            <!-- /.radio-card -->
+          </div>
+          <div class="grid-wrapper grid-col-auto">
+            <label for="radio-card-5" class="radio-card">
+              <div class="card-content-wrapper">
+                <span class="check-icon">
+                    <input type="checkbox" name="radio-card" id="radio-card-5"/>
+                </span>
+                <div class="card-content">
+                 
+                  <h4>Bhajan</h4>
+                  <h5>The One with all religious songs</h5>
+                </div>
+              </div>
+            </label>
+            <!-- /.radio-card -->
+  
+            <label for="radio-card-6" class="radio-card">
+              <div class="card-content-wrapper">
+                <span class="check-icon">
+                    <input type="checkbox" name="radio-card" id="radio-card-6" />
+                </span>
+                <div class="card-content">
+                  <h4>Ghazal.</h4>
+                  <h5>A poet's Favourite!</h5>
+                </div>
+              </div>
+            </label>
+            <!-- /.radio-card -->
+          </div>
+          <div class="grid-wrapper grid-col-auto">
+            <label for="radio-card-7" class="radio-card">
+              <div class="card-content-wrapper">
+                <span class="check-icon">
+                    <input type="checkbox" name="radio-card" id="radio-card-7" />
+                </span>
+                <div class="card-content">
+                 
+                  <h4>Bhojpuri.</h4>
+                  <h5>Songs in a regional language called Bhojpuri</h5>
+                </div>
+              </div>
+            </label>
+            <!-- /.radio-card -->
+  
+            <!-- <label for="radio-card-2" class="radio-card">
+              <input type="radio" name="radio-card" id="radio-card-2" />
+              <div class="card-content-wrapper">
+                <span class="check-icon"></span>
+                <div class="card-content">
+                  <h4>Lorem ipsum dolor.</h4>
+                  <h5>Lorem ipsum dolor sit amet, consectetur.</h5>
+                </div>
+              </div>
+            </label> -->
+            <!-- /.radio-card -->
+          </div>
+          <button type="button" class="btn btn-light" style="margin-left: 50%;">Submit</button>
+        <!-- /.grid-wrapper -->
+      </div>
+      <!-- /.container -->
+</body>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+</html>
