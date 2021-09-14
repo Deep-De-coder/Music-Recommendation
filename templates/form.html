@@ -41,12 +41,12 @@
     <p><br></p>
     <p><br></p>
     <div class="container">
-        
+        <form name="form1">
         <div class="grid-wrapper grid-col-auto">
           <label for="radio-card-1" class="radio-card">
             <div class="card-content-wrapper">
               <span class="check-icon">
-                <input type="checkbox" name="radio-card" id="radio-card-1"/>
+                <input  type="checkbox" name="radio-card" id="radio-card-1" />
               </span>
               <div class="card-content">               
                 <h4>Bollywood Rap</h4>
@@ -59,7 +59,7 @@
           <label for="radio-card-2" class="radio-card">
             <div class="card-content-wrapper">
                 <span class="check-icon">
-                    <input type="checkbox" name="radio-card" id="radio-card-2"/>
+                    <input type="checkbox" name="radio-card" id="radio-card-2" />
                 </span>
               <div class="card-content">
                 <h4>Bollywood Romantic</h4>
@@ -86,7 +86,7 @@
             <label for="radio-card-4" class="radio-card">
               <div class="card-content-wrapper">
                 <span class="check-icon">
-                    <input type="checkbox" name="radio-card" id="radio-card-4"/>
+                    <input type="checkbox" name="radio-card" id="radio-card-4" />
                 </span>
                 <div class="card-content">
                   <h4> Garhwali</h4>
@@ -100,7 +100,7 @@
             <label for="radio-card-5" class="radio-card">
               <div class="card-content-wrapper">
                 <span class="check-icon">
-                    <input type="checkbox" name="radio-card" id="radio-card-5"/>
+                    <input type="checkbox" name="radio-card" id="radio-card-5" />
                 </span>
                 <div class="card-content">
                  
@@ -128,7 +128,7 @@
             <label for="radio-card-7" class="radio-card">
               <div class="card-content-wrapper">
                 <span class="check-icon">
-                    <input type="checkbox" name="radio-card" id="radio-card-7" />
+                    <input onclick="" type="checkbox" name="radio-card" id="radio-card-7" />
                 </span>
                 <div class="card-content">
                  
@@ -151,11 +151,41 @@
             </label> -->
             <!-- /.radio-card -->
           </div>
-          <button type="button" class="btn btn-light" style="margin-left: 50%;">Submit</button>
+          <button type="button" class="btn btn-light" style="margin-left: 50%;" formaction="/preferenceform/{{user.id}}" formmethod="POST">Submit</button>
         <!-- /.grid-wrapper -->
+        </form>
+        <br><br>
+        <div id=msg></div><br><br>
       </div>
       <!-- /.container -->
 </body>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-</html>
+<script type="text/javascript"> 
+$('input[type=checkbox]').on('change', function (e) {
+    if ($('input[type=checkbox]:checked').length > 3) {
+        $(this).prop('checked', false);
+        alert("allowed only 3");
+    }
+});
+
+
+//   function chkcontrol(j) {
+//   var sum=0;
+//   for(var i=0; i < document.form1.radio-card.length; i++){
+  
+//   if(document.form1.radio-card[i].checked){
+//   sum = sum + parseInt(document.form1.radio-card[i].value);
+//   }
+//   document.getElementById("msg").innerHTML="Sum :"+ sum;
+  
+//   if(sum >3){
+//   sum = sum - parseInt(document.form1.radio-card[j].value);
+//   document.form1.radio-card[j].checked == false ;
+//   alert("Sum of the selection can't be more than 3") 
+//   //return false;
+//   }
+//   document.getElementById("msg").innerHTML="Sum :"+ sum;
+//   }
+//   }</script>
+ </html>

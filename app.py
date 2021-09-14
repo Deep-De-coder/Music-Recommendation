@@ -92,8 +92,7 @@ def signup():
             flash("User Name Already Exists, Choose Different", "warning")
             return redirect("/signup")
         if(password == cpassword):
-            new_user = Users(username=username,
-                             password=hashed_password, mail_id=mail_id)
+            new_user = Users(username=username,password=hashed_password, mail_id=mail_id)
             db.session.add(new_user)
             db.session.commit()
 
@@ -109,14 +108,24 @@ def signup():
             # with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
             #     smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             #     smtp.send_message(msg)
+            user= Users.query.filter_by(username=username).first() 
 
             flash("Sucessfully Registered!", "success")
-            return redirect('/login')
+            return redirect(f'/preferenceform/{user.id}')
         else:
             flash("Passwords don't match", "danger")
             return redirect("/signup")
 
     return render_template("sign-up.html")
+
+@app.route('/preferenceform/<int:user_id>', methods=['POST', 'GET'])
+def preferenceform(user_id):
+    user=Users.query.filter_by(id=user_id).first()
+    if request.method == "POST":
+        genre = request.form.getlist('radio-card')
+        print(genre)
+    return render_template("form.html",user=user)
+
 
 
 @app.route('/login', methods=['POST', 'GET'])
