@@ -14,6 +14,9 @@ import imghdr
 from email.message import EmailMessage
 import datetime
 import os
+import flask_excel as excel
+from openpyxl import Workbook, load_workbook
+import random
 
 app = Flask(__name__)
 
@@ -47,6 +50,9 @@ class Users(UserMixin, db.Model):
     password = db.Column(db.String(15), nullable=False)
     mail_id = db.Column(db.String(15), nullable=False, unique=True)
     likes = db.relationship('Likes', backref='Users')
+    preference1 = db.Column(db.Text)
+    preference2 = db.Column(db.Text)
+    preference3 = db.Column(db.Text)
 
 
 class Likes(db.Model):
@@ -69,10 +75,6 @@ def convert(seconds):
     return hours, mins, seconds
 
 
-EMAIL_ADDRESS = 'musicfiesta21@gmail.com'
-EMAIL_PASSWORD = 'musicfiestapassword'
-
-
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     try:
@@ -92,7 +94,8 @@ def signup():
             flash("User Name Already Exists, Choose Different", "warning")
             return redirect("/signup")
         if(password == cpassword):
-            new_user = Users(username=username,password=hashed_password, mail_id=mail_id)
+            new_user = Users(username=username,
+                             password=hashed_password, mail_id=mail_id)
             db.session.add(new_user)
             db.session.commit()
 
@@ -108,9 +111,10 @@ def signup():
             # with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
             #     smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             #     smtp.send_message(msg)
-            user= Users.query.filter_by(username=username).first() 
+            user = Users.query.filter_by(username=username).first()
 
-            flash("Sucessfully Registered!", "success")
+            flash(
+                "Please Select Preference to Complete the Registration Process", "success")
             return redirect(f'/preferenceform/{user.id}')
         else:
             flash("Passwords don't match", "danger")
@@ -118,14 +122,23 @@ def signup():
 
     return render_template("sign-up.html")
 
+
 @app.route('/preferenceform/<int:user_id>', methods=['POST', 'GET'])
 def preferenceform(user_id):
-    user=Users.query.filter_by(id=user_id).first()
+    user = Users.query.filter_by(id=user_id).first()
     if request.method == "POST":
         genre = request.form.getlist('radio-card')
-        print(genre)
-    return render_template("form.html",user=user)
+        try:
+            user.preference1 = genre[0]
+            user.preference2 = genre[1]
+            user.preference3 = genre[2]
+            db.session.commit()
+        except:
+            db.session.commit() 
+        flash("Sucessfully Registered!")       
+        return redirect('/login')
 
+    return render_template("form.html", user=user)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -360,31 +373,68 @@ def liked(user_id, song_id):
     return redirect(url)
 
 
-@app.route('/uploaddataset')
-def uploaddataset():
-    count = 0
-    for filename in os.listdir('Dataset\\bhajan'):
-        if filename.endswith(".mp3"):
-            name = filename.split(" - ")[1]
-            artist = filename.split(" - ")[0]
-            genre = "bhajan"
-            path = f'Dataset\\bhajan\{filename}'
-            coverphoto = url_for('static', filename='images/bhajan.jpeg')
-            audio = MP3(path)
-            audio_info = audio.info
-            length_in_secs = int(audio_info.length)
-            hours, mins, seconds = convert(length_in_secs)
-            duration = f"{mins}:{seconds}"
-            new_song = Songs(name=name, path=path, artist=artist, genre=genre,
-                             cover_photo=coverphoto, duration=duration)
-            db.session.add(new_song)
-            count = count+1
-    db.session.commit()
-    print("COUNT ", count)
-    return "DONE"
+# @app.route('/uploaddataset')
+# def uploaddataset():
+#     count = 0
+#     for filename in os.listdir('Dataset\\bhajan'):
+#         if filename.endswith(".mp3"):
+#             name = filename.split(" - ")[1]
+#             artist = filename.split(" - ")[0]
+#             genre = "bhajan"
+#             path = f'Dataset\\bhajan\{filename}'
+#             coverphoto = url_for('static', filename='images/bhajan.jpeg')
+#             audio = MP3(path)
+#             audio_info = audio.info
+#             length_in_secs = int(audio_info.length)
+#             hours, mins, seconds = convert(length_in_secs)
+#             duration = f"{mins}:{seconds}"
+#             new_song = Songs(name=name, path=path, artist=artist, genre=genre,
+#                              cover_photo=coverphoto, duration=duration)
+#             db.session.add(new_song)
+#             count = count+1
+#     db.session.commit()
+#     print("COUNT ", count)
+#     return "DONE"
 
+
+# def save_excel(form_excel):
+#     _, f_ext = os.path.splitext(form_excel.filename)
+#     excel_fn = "sheet" + f_ext
+#     excel_path = os.path.join(app.root_path, excel_fn)
+#     form_excel.save(excel_path)
+#     return excel_fn
+
+# @app.route('/uploaduserdata',methods = ['GET','POST'])
+# def uploaduserdata():
+#     if request.method == "POST":
+#         sheet = request.files['Excel']
+#         data_file = save_excel(sheet)
+#         # Load the entire workbook.
+#         wb = load_workbook(data_file, data_only=True)
+#         # Load one worksheet.
+#         ws = wb['data']
+#         all_rows = list(ws.rows)
+#         genres = ['bhojpuri','sufi','bollywood_rap','bollywood_romantic','bhajan','ghazal','garhwali']
+#         # Pull information from specific cells.
+#         for row in all_rows[2:]:
+#             fullname = row[0].value
+#             username = f"{fullname.split(' ')[0]}.{fullname.split(' ')[1]}"
+#             email = f"{fullname.split(' ')[0]}.{fullname.split(' ')[1]}@gmail.com"
+#             pref = random.sample(genres, 3)
+#             preference1 = pref[0]
+#             preference2 = pref[1]
+#             preference3 = pref[2]            
+#             user = Users.query.filter_by(username = username).first()
+#             if user:
+#                 pass
+#             else:
+#                 newuser = Users(username = username,password='sha256$cBl7wrlwRwy9QHJB$7a873cb0e1cd6cd2070c00147540fc6ba209e9114152385c94e06fb641951076', mail_id = email, preference1 = preference1, preference2 = preference2, preference3 = preference3)
+#                 db.session.add(newuser)
+
+#         db.session.commit()        
+#         return "Data Added"        
+#     return render_template('uploaduserdata.html')    
 
 if __name__ == "__main__":
     db.create_all()
     app.run(debug=True)
-

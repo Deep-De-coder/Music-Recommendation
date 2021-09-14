@@ -40,13 +40,24 @@
    <p><br></p>
     <p><br></p>
     <p><br></p>
+    {% with messages = get_flashed_messages() %}
+                 {% if messages %}
+                    <div class = "flashes" style="color: whitesmoke; text-align:center;">
+                      <h4>{{ messages[messages|length - 1] }}</h4>
+                       <!-- {% for message in messages %}
+                          <h4>{{ message }}</h4>
+                       {% endfor %}    -->
+                    <div>
+                 {% endif %}
+   {% endwith %}
+   <p><br></p>
     <div class="container">
-        <form name="form1">
+        <form name="form1" method="POST">
         <div class="grid-wrapper grid-col-auto">
           <label for="radio-card-1" class="radio-card">
             <div class="card-content-wrapper">
               <span class="check-icon">
-                <input  type="checkbox" name="radio-card" id="radio-card-1" />
+                <input  type="checkbox" name="radio-card" id="radio-card-1" value="bollywood_rap" />
               </span>
               <div class="card-content">               
                 <h4>Bollywood Rap</h4>
@@ -59,7 +70,7 @@
           <label for="radio-card-2" class="radio-card">
             <div class="card-content-wrapper">
                 <span class="check-icon">
-                    <input type="checkbox" name="radio-card" id="radio-card-2" />
+                    <input type="checkbox" name="radio-card" id="radio-card-2" value="bollywood_romantic" />
                 </span>
               <div class="card-content">
                 <h4>Bollywood Romantic</h4>
@@ -73,7 +84,7 @@
             <label for="radio-card-3" class="radio-card">
               <div class="card-content-wrapper">
                 <span class="check-icon">
-                    <input type="checkbox" name="radio-card" id="radio-card-3" />
+                    <input type="checkbox" name="radio-card" id="radio-card-3" value="sufi" />
                   </span>
                 <div class="card-content">                 
                   <h4>Sufi</h4>
@@ -86,7 +97,7 @@
             <label for="radio-card-4" class="radio-card">
               <div class="card-content-wrapper">
                 <span class="check-icon">
-                    <input type="checkbox" name="radio-card" id="radio-card-4" />
+                    <input type="checkbox" name="radio-card" id="radio-card-4" value="garhwali" />
                 </span>
                 <div class="card-content">
                   <h4> Garhwali</h4>
@@ -100,7 +111,7 @@
             <label for="radio-card-5" class="radio-card">
               <div class="card-content-wrapper">
                 <span class="check-icon">
-                    <input type="checkbox" name="radio-card" id="radio-card-5" />
+                    <input type="checkbox" name="radio-card" id="radio-card-5" value="bhajan" />
                 </span>
                 <div class="card-content">
                  
@@ -114,7 +125,7 @@
             <label for="radio-card-6" class="radio-card">
               <div class="card-content-wrapper">
                 <span class="check-icon">
-                    <input type="checkbox" name="radio-card" id="radio-card-6" />
+                    <input type="checkbox" name="radio-card" id="radio-card-6" value="ghazal" />
                 </span>
                 <div class="card-content">
                   <h4>Ghazal.</h4>
@@ -128,7 +139,7 @@
             <label for="radio-card-7" class="radio-card">
               <div class="card-content-wrapper">
                 <span class="check-icon">
-                    <input onclick="" type="checkbox" name="radio-card" id="radio-card-7" />
+                    <input type="checkbox" name="radio-card" id="radio-card-7" value="bhojpuri"/>
                 </span>
                 <div class="card-content">
                  
@@ -151,9 +162,11 @@
             </label> -->
             <!-- /.radio-card -->
           </div>
-          <button type="button" class="btn btn-light" style="margin-left: 50%;" formaction="/preferenceform/{{user.id}}" formmethod="POST">Submit</button>
+          <button type="submit" class="btn btn-light" style="margin-left: 50%;" formaction="/preferenceform/{{user.id}}">Submit</button>
+
         <!-- /.grid-wrapper -->
         </form>
+
         <br><br>
         <div id=msg></div><br><br>
       </div>
