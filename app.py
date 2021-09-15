@@ -433,7 +433,52 @@ def liked(user_id, song_id):
 
 #         db.session.commit()        
 #         return "Data Added"        
-#     return render_template('uploaduserdata.html')    
+#     return render_template('uploaduserdata.html') 
+    
+@app.route('/uploadlikes',methods = ['GET'])
+def uploadlikes():
+    users = Users.query.all()
+    for user in users:
+        if user.preference1 == "garhwali" or user.preference2 == "garhwali" or user.preference3 == "garhwali":
+            for i in range(5):
+                like = Likes(user_id = user.id, song_id = random.randrange(1,91), like = 1) 
+                db.session.add(like)
+            db.session.commit()
+        if user.preference1 == "ghazal" or user.preference2 == "ghazal" or user.preference3 == "ghazal":
+            for i in range(5):
+                like = Likes(user_id = user.id, song_id = random.randrange(91,185), like = 1) 
+                db.session.add(like)
+            db.session.commit()
+        if user.preference1 == "bhajan" or user.preference2 == "bhajan" or user.preference3 == "bhajan":
+            for i in range(5):
+                like = Likes(user_id = user.id, song_id = random.randrange(515,563), like = 1) 
+                db.session.add(like)
+            db.session.commit()
+        if user.preference1 == "bhojpuri" or user.preference2 == "bhojpuri" or user.preference3 == "bhojpuri":
+            for i in range(5):
+                like = Likes(user_id = user.id, song_id = random.randrange(440,515), like = 1) 
+                db.session.add(like)
+            db.session.commit()
+        if user.preference1 == "bollywood_rap" or user.preference2 == "bollywood_rap" or user.preference3 == "bollywood_rap":
+            for i in range(5):
+                like = Likes(user_id = user.id, song_id = random.randrange(259,359), like = 1) 
+                db.session.add(like)
+            db.session.commit()
+        if user.preference1 == "bollywood_romantic" or user.preference2 == "bollywood_romantic" or user.preference3 == "bollywood_romantic":
+            for i in range(5):
+                like = Likes(user_id = user.id, song_id = random.randrange(359,440), like = 1) 
+                db.session.add(like)
+            db.session.commit()
+        if user.preference1 == "sufi" or user.preference2 == "sufi" or user.preference3 == "sufi":
+            for i in range(5):
+                like = Likes(user_id = user.id, song_id = random.randrange(185,259), like = 1) 
+                db.session.add(like)
+            db.session.commit()  
+        for i in range(5):
+            like = Likes(user_id = user.id, song_id = random.randrange(1,563), like = 1) 
+            db.session.add(like)
+        db.session.commit()
+    return "Data Added"    
 
 if __name__ == "__main__":
     db.create_all()
