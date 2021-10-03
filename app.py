@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect, session, flash, send_file
 from flask import make_response, session, g
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import or_
+from sqlalchemy import or_, create_engine
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from io import BytesIO
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -27,6 +27,9 @@ login_manager.login_message = "You need to Login first"
 
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///MusicPlayer.db'
+
+engine = create_engine('sqlite:///MusicPlayer.db')
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
