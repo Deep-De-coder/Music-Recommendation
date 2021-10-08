@@ -111,7 +111,7 @@ def signup():
             # f = open("templates/hello.txt", "r")
             # msg.add_alternative(f.read(), subtype='html')
 
-            # with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            # with smtplib.SMTP_SSL('smtp.gmail.com'3, 465) as smtp:
             #     smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             #     smtp.send_message(msg)
             user = Users.query.filter_by(username=username).first()
@@ -301,7 +301,7 @@ def play(id):
     if interaction:
         interaction.listen_count = interaction.listen_count + 1
         song.total_listen_count = song.total_listen_count + 1
-        db.commit()
+        db.session.commit()
     else:
         interaction = Interactions(user_id = current_user.id,song_id = song.id,listen_count = 1)
         song.total_listen_count = song.total_listen_count + 1
