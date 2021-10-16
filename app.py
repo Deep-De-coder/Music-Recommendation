@@ -462,7 +462,7 @@ def uploadlikes():
                 listen_count = random.randrange(1,1000)
                 like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
                 song = Songs.query.filter_by(id = song_id).first()
-                song.total_listen_count = listen_count
+                song.total_listen_count = song.total_listen_count + listen_count
                 song.total_likes = song.total_likes + 1
                 db.session.add(like)
                 db.session.commit()
@@ -472,7 +472,7 @@ def uploadlikes():
                 listen_count = random.randrange(1,1000)
                 like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count)
                 song = Songs.query.filter_by(id = song_id).first()
-                song.total_listen_count = listen_count
+                song.total_listen_count = song.total_listen_count + listen_count
                 song.total_likes = song.total_likes + 1 
                 db.session.add(like)
                 db.session.commit()
@@ -482,7 +482,7 @@ def uploadlikes():
                 listen_count = random.randrange(1,1000)
                 like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
                 song = Songs.query.filter_by(id = song_id).first()
-                song.total_listen_count = listen_count
+                song.total_listen_count = song.total_listen_count + listen_count
                 song.total_likes = song.total_likes + 1 
                 db.session.add(like)
                 db.session.commit()
@@ -492,7 +492,7 @@ def uploadlikes():
                 listen_count = random.randrange(1,1000)
                 like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
                 song = Songs.query.filter_by(id = song_id).first()
-                song.total_listen_count = listen_count
+                song.total_listen_count = song.total_listen_count + listen_count
                 song.total_likes = song.total_likes + 1 
                 db.session.add(like)
                 db.session.commit()
@@ -502,7 +502,7 @@ def uploadlikes():
                 listen_count = random.randrange(1,1000)
                 like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
                 song = Songs.query.filter_by(id = song_id).first()
-                song.total_listen_count = listen_count
+                song.total_listen_count = song.total_listen_count + listen_count
                 song.total_likes = song.total_likes + 1 
                 db.session.add(like)
                 db.session.commit()
@@ -512,7 +512,7 @@ def uploadlikes():
                 listen_count = random.randrange(1,1000)
                 like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
                 song = Songs.query.filter_by(id = song_id).first()
-                song.total_listen_count = listen_count
+                song.total_listen_count =  song.total_listen_count +listen_count
                 song.total_likes = song.total_likes + 1 
                 db.session.add(like)
                 db.session.commit()
@@ -522,16 +522,16 @@ def uploadlikes():
                 listen_count = random.randrange(1,1000)
                 like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
                 song = Songs.query.filter_by(id = song_id).first()
-                song.total_listen_count = listen_count
+                song.total_listen_count =  song.total_listen_count +listen_count
                 song.total_likes = song.total_likes + 1
                 db.session.add(like)
-                db.session.commit()  
+                db.session.commit()       
         for i in range(5):
             song_id = random.randrange(1,563)
             listen_count = random.randrange(1,1000)
             like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
             song = Songs.query.filter_by(id = song_id).first()
-            song.total_listen_count = listen_count
+            song.total_listen_count =  song.total_listen_count +listen_count
             song.total_likes = song.total_likes + 1
             db.session.add(like)
             db.session.commit()
