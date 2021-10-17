@@ -9,14 +9,12 @@ import secrets
 import os
 from mutagen.mp3 import MP3
 from pygame import *
-import smtplib
-import imghdr
 from email.message import EmailMessage
 import datetime
 import os
-import flask_excel as excel
 from openpyxl import Workbook, load_workbook
 import random
+import model
 
 app = Flask(__name__)
 
