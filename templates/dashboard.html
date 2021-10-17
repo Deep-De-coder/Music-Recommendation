@@ -85,7 +85,25 @@
             
         </div>
     </div>
+  
+  
+<p style="margin-top: 100vh;"><br></p>
+    <h2><strong>Songs Recommended For You<span></span></strong></h2>
 
+    <div class="cards">
+  
+      <figure class="card" style="width: 180px;">
+        <img src="{{song.cover_photo}}"/>
+        <figcaption>
+          <form method="POST">
+          <button id="play" type="submit" formaction="/play/{{song.id}}"  style="border: none;background: none;color: black;"><i class="fa fa-play-circle" style="font-size:38px"></i></button>
+          </form>
+          <h4 style="text-decoration: none; color: black; background-color: gray;">{{song.name}}</h4>
+        </figcaption>
+      </figure>
+    </div>
+    
+    
 </body>
 <script>
   var music = document.querySelector('.music-element')
