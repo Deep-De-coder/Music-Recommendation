@@ -27,13 +27,14 @@ login_manager.login_message = "You need to Login first"
 
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///MusicPlayer.db'
-
+app.secret_key = 'dljsaklqk24e21cjn!Ew@@dsa5'
 engine = create_engine('sqlite:///MusicPlayer.db')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+session = dict()
 
 class Songs(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -183,9 +184,8 @@ def logout():
 
 @app.route('/')
 def index():
-    if mixer.get_init():
-        stop()
-    return render_template('home.html', current_user=current_user)
+    current_song_id = session.get("current_song",None)    
+    return render_template('home.html', current_user=current_user,song_id = current_song_id)
 
 
 @app.route('/dashboard/<song_id>', methods=['POST', 'GET'])
@@ -204,35 +204,38 @@ def dashboard(song_id):
 @app.route('/allsonglist', methods=['POST', 'GET'])
 def allsonglist():
     songs = Songs.query.order_by(Songs.name.desc()).all()
-    return render_template('allsonglist.html', songs=songs)
+    current_song_id = session.get("current_song",None)
+    return render_template('allsonglist.html', songs=songs,song_id = current_song_id)
 
 
 @app.route('/likedsonglist', methods=['POST', 'GET'])
 @login_required
 def likedsonglist():
     songs = []
+    current_song_id = session.get("current_song",None)
     liked_songs = Interactions.query.filter_by(user_id=current_user.id).all()
     for l in liked_songs:
         song = Songs.query.filter_by(id=l.song_id).first()
         songs.append(song)
     if len(songs) == 0:
         flash("LIKE some songs to Add songs in this Playlist!")
-    return render_template('likedsonglist.html', songs=songs)
+    return render_template('likedsonglist.html', songs=songs, song_id = current_song_id)
 
 
 @app.route('/search', methods=['POST', 'GET'])
 def search():
+    current_song_id = session.get("current_song",None)
     if request.method == "POST":
         search_string = request.form['search_string']
         search = "{0}".format(search_string)
         search = search+'%'
-
+        current_song_id = session.get("current_song",None)
         results = Songs.query.filter(
             or_(Songs.name.like(search), Songs.artist.like(search))).all()
         if len(results) == 0:
             flash("No such song availabe!")
-        return render_template('search.html', results=results)
-    return render_template('search.html')
+        return render_template('search.html', results=results,song_id = current_song_id)
+    return render_template('search.html',song_id = current_song_id)
 
 
 def save_picture(form_picture):
@@ -297,6 +300,7 @@ def play(id):
     song = Songs.query.filter_by(id=id).first()
     mixer.music.load(song.path)
     mixer.music.play()
+    session['current_song']= song.id
     interaction = Interactions.query.filter_by(user_id = current_user.id, song_id = song.id).first()
     if interaction:
         interaction.listen_count = interaction.listen_count + 1
