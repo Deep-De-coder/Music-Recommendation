@@ -45,7 +45,7 @@ A = normalised_mat.T / np.sqrt(ratings_mat.shape[0] - 1)
 U, S, V = np.linalg.svd(A)
 
 
-def top_cosine_similarity(data, movie_id, top_n=10):
+def top_cosine_similarity(data, movie_id, top_n=18):
     index = movie_id - 1  # Movie id starts from 1 in the dataset
     movie_row = data[index, :]
     magnitude = np.sqrt(np.einsum('ij, ij -> i', data, data))
@@ -57,14 +57,18 @@ def top_cosine_similarity(data, movie_id, top_n=10):
 def print_similar_songs(song_df, song_id, top_indexes):
     print('Recommendations for {0}: \n'.format(
         song_df[song_df.song_id == song_id].name.values[0]))
+    songs = []
     for id in top_indexes + 1:
-        return type(song_df[song_df.song_id == id].name.values[0])
+        songs.append(song_df[song_df.song_id == id].name.values[0])
+    return songs
 
 
 def recommend_songs(song_id):
     k = 50
-    song_id = song_id
-    top_n = 20
+    song_id = int(song_id)
+    top_n = 18
     sliced = V.T[:, :k]  # representative data
     indexes = top_cosine_similarity(sliced, song_id, top_n)
-    print_similar_songs(song_df, song_id, indexes)
+    print(indexes)
+    songs = print_similar_songs(song_df, song_id, indexes)
+    return songs

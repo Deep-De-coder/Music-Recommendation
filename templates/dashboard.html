@@ -88,10 +88,10 @@
   
   
 <p style="margin-top: 100vh;"><br></p>
-    <h2><strong>Songs Recommended For You<span></span></strong></h2>
+    <h2><strong>Other Such Songs Recommended For You<span></span></strong></h2>
 
     <div class="cards">
-  
+      {% for song in reco_songs %}
       <figure class="card" style="width: 180px;">
         <img src="{{song.cover_photo}}"/>
         <figcaption>
@@ -101,6 +101,7 @@
           <h4 style="text-decoration: none; color: black; background-color: gray;">{{song.name}}</h4>
         </figcaption>
       </figure>
+      {% endfor %}
     </div>
     
     

@@ -177,6 +177,11 @@ def logout():
     if mixer.get_init():
         stop()
     logout_user()
+    try:
+        if session['current_song']:
+            session['current_song'] = None
+    except:
+        pass        
     flash("Successfully Logged out!")
     return redirect('/login')
 
@@ -194,10 +199,13 @@ def dashboard(song_id):
     liked_song = Interactions.query.filter_by(
         user_id=current_user.id, song_id=song_id).first()
 
-    current_time_sec = mixer.music.get_pos()
-    current_time = int(current_time_sec/1000)
+    reco_songs = []
+    songs = model.recommend_songs(song_id)
+    for i in songs:
+        s = Songs.query.filter_by(name=i).first()
+        reco_songs.append(s)
 
-    return render_template('dashboard.html', song=song, current_user=current_user, liked_song=liked_song, current_time=current_time)
+    return render_template('dashboard.html', song=song, current_user=current_user, liked_song=liked_song, reco_songs=reco_songs)
 
 
 @app.route('/allsonglist', methods=['POST', 'GET'])
@@ -211,7 +219,7 @@ def allsonglist():
         song = Songs.query.filter_by(name=i).first()
         pop_songs.append(song)
     print(pop_songs)
-    return render_template('allsonglist.html', songs=songs, pop_songs = pop_songs, song_id=current_song_id)
+    return render_template('allsonglist.html', songs=songs, pop_songs=pop_songs, song_id=current_song_id)
 
 
 @app.route('/likedsonglist', methods=['POST', 'GET'])
