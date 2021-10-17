@@ -52,7 +52,24 @@
                 <div class="card"  style="background: #24282f;">
                     <div class="card-body">
                         <div class="owl-carousel">
-                            <div class="item"> <img src="../static/images/bhajan.jpeg" alt="image" style="height: 300px;"/> </div>
+                          {% for song in pop_songs %}
+                            <div class="item"> 
+                              <!-- <img src="../static/images/bhajan.jpeg" alt="image" style="height: 300px;"/> -->
+                              <div class="cards">
+                                
+                                <figure class="card">
+                                  <img src="{{song.cover_photo}}"/>
+                                  <figcaption>
+                                    <form method="POST">
+                                    <button id="play" type="submit" formaction="/play/{{song.id}}"  style="border: none;background: none;color: white;"><i class="fa fa-play-circle" style="font-size:38px"></i></button>
+                                    </form>
+                                    <h4 style="text-decoration: none; color: black; background-color: gray;">{{song.name}}</h4>
+                                  </figcaption>
+                                </figure>                                                            
+                              </div>
+                             </div>
+                             {% endfor %}
+                            <!-- <div class="item"> <img src="../static/images/bhajan.jpeg" alt="image"  style="height: 300px;"/> </div>
                             <div class="item"> <img src="../static/images/bhajan.jpeg" alt="image"  style="height: 300px;"/> </div>
                             <div class="item"> <img src="../static/images/bhajan.jpeg" alt="image"  style="height: 300px;"/> </div>
                             <div class="item"> <img src="../static/images/bhajan.jpeg" alt="image"  style="height: 300px;"/> </div>
@@ -61,8 +78,7 @@
                             <div class="item"> <img src="../static/images/bhajan.jpeg" alt="image"  style="height: 300px;"/> </div>
                             <div class="item"> <img src="../static/images/bhajan.jpeg" alt="image"  style="height: 300px;"/> </div>
                             <div class="item"> <img src="../static/images/bhajan.jpeg" alt="image"  style="height: 300px;"/> </div>
-                            <div class="item"> <img src="../static/images/bhajan.jpeg" alt="image"  style="height: 300px;"/> </div>
-                            <div class="item"> <img src="../static/images/bhajan.jpeg" alt="image"  style="height: 300px;"/> </div>
+                            <div class="item"> <img src="../static/images/bhajan.jpeg" alt="image"  style="height: 300px;"/> </div> -->
                         </div>
                     </div>
                 </div>

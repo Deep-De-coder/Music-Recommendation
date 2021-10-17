@@ -2,7 +2,7 @@ import sqlite3
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
-import model.Recommenders as Recommenders
+import models.Recommenders as Recommenders
 
 conn = sqlite3.connect('MusicPlayer.db')
 sql_query = pd.read_sql_query('''SELECT * FROM Interactions''', conn)
@@ -23,7 +23,7 @@ song_df.drop(labels=['path', 'cover_photo', 'duration',
                      'total_likes', 'total_listen_count'], axis=1, inplace=True)
 song_df.rename(columns={'id': 'song_id'}, inplace=True)
 
-merged_song_df = pd.merge(df, song_df.drop_duplicates(
+merged_song_df = pd.merge(rating_df, song_df.drop_duplicates(
     ['song_id']), on="song_id", how="left")
 train_data, test_data = train_test_split(
     merged_song_df, test_size=0.20, random_state=0)
@@ -32,7 +32,7 @@ train_data, test_data = train_test_split(
 def popular_recommender(user_id):
     pm = Recommenders.popularity_recommender_py()
     pm.create(train_data, 'user_id', 'name')
-    return type(pm.recommend(user_id))
+    return pm.recommend(user_id)
 
 
 ratings_mat = np.ndarray(shape=(np.max(rating_df.song_id.values), np.max(

@@ -34,6 +34,7 @@ db = SQLAlchemy(app)
 
 session = dict()
 
+
 class Songs(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(15), nullable=False)
@@ -136,8 +137,8 @@ def preferenceform(user_id):
             user.preference3 = genre[2]
             db.session.commit()
         except:
-            db.session.commit() 
-        flash("Sucessfully Registered!")       
+            db.session.commit()
+        flash("Sucessfully Registered!")
         return redirect('/login')
 
     return render_template("form.html", user=user)
@@ -182,8 +183,8 @@ def logout():
 
 @app.route('/')
 def index():
-    current_song_id = session.get("current_song",None)    
-    return render_template('home.html', current_user=current_user,song_id = current_song_id)
+    current_song_id = session.get("current_song", None)
+    return render_template('home.html', current_user=current_user, song_id=current_song_id)
 
 
 @app.route('/dashboard/<song_id>', methods=['POST', 'GET'])
@@ -200,40 +201,47 @@ def dashboard(song_id):
 
 
 @app.route('/allsonglist', methods=['POST', 'GET'])
+@login_required
 def allsonglist():
     songs = Songs.query.order_by(Songs.name.desc()).all()
-    current_song_id = session.get("current_song",None)
-    return render_template('allsonglist.html', songs=songs,song_id = current_song_id)
+    current_song_id = session.get("current_song", None)
+    pop_df = model.popular_recommender(current_user.id)
+    pop_songs = []
+    for i in pop_df['name'].tolist():
+        song = Songs.query.filter_by(name=i).first()
+        pop_songs.append(song)
+    print(pop_songs)
+    return render_template('allsonglist.html', songs=songs, pop_songs = pop_songs, song_id=current_song_id)
 
 
 @app.route('/likedsonglist', methods=['POST', 'GET'])
 @login_required
 def likedsonglist():
     songs = []
-    current_song_id = session.get("current_song",None)
+    current_song_id = session.get("current_song", None)
     liked_songs = Interactions.query.filter_by(user_id=current_user.id).all()
     for l in liked_songs:
         song = Songs.query.filter_by(id=l.song_id).first()
         songs.append(song)
     if len(songs) == 0:
         flash("LIKE some songs to Add songs in this Playlist!")
-    return render_template('likedsonglist.html', songs=songs, song_id = current_song_id)
+    return render_template('likedsonglist.html', songs=songs, song_id=current_song_id)
 
 
 @app.route('/search', methods=['POST', 'GET'])
 def search():
-    current_song_id = session.get("current_song",None)
+    current_song_id = session.get("current_song", None)
     if request.method == "POST":
         search_string = request.form['search_string']
         search = "{0}".format(search_string)
         search = search+'%'
-        current_song_id = session.get("current_song",None)
+        current_song_id = session.get("current_song", None)
         results = Songs.query.filter(
             or_(Songs.name.like(search), Songs.artist.like(search))).all()
         if len(results) == 0:
             flash("No such song availabe!")
-        return render_template('search.html', results=results,song_id = current_song_id)
-    return render_template('search.html',song_id = current_song_id)
+        return render_template('search.html', results=results, song_id=current_song_id)
+    return render_template('search.html', song_id=current_song_id)
 
 
 def save_picture(form_picture):
@@ -298,17 +306,19 @@ def play(id):
     song = Songs.query.filter_by(id=id).first()
     mixer.music.load(song.path)
     mixer.music.play()
-    session['current_song']= song.id
-    interaction = Interactions.query.filter_by(user_id = current_user.id, song_id = song.id).first()
+    session['current_song'] = song.id
+    interaction = Interactions.query.filter_by(
+        user_id=current_user.id, song_id=song.id).first()
     if interaction:
         interaction.listen_count = interaction.listen_count + 1
         song.total_listen_count = song.total_listen_count + 1
         db.session.commit()
     else:
-        interaction = Interactions(user_id = current_user.id,song_id = song.id,listen_count = 1)
+        interaction = Interactions(
+            user_id=current_user.id, song_id=song.id, listen_count=1)
         song.total_listen_count = song.total_listen_count + 1
         db.session.add(interaction)
-        db.session.commit()    
+        db.session.commit()
     url = f"/dashboard/{id}"
     return redirect(url)
 
@@ -366,7 +376,8 @@ def liked(user_id, song_id):
     song = Songs.query.filter_by(id=song_id).first()
     if info == 'true':
         print("info - ", info)
-        u = Interactions.query.filter_by(user_id=user.id, song_id=song.id).first()
+        u = Interactions.query.filter_by(
+            user_id=user.id, song_id=song.id).first()
         if u:
             print("Inside if, userid and songid exists")
             u.like = 1
@@ -378,7 +389,8 @@ def liked(user_id, song_id):
             db.session.commit()
     elif info == 'false':
         print("info - ", info)
-        u = Interactions.query.filter_by(user_id=user.id, song_id=song.id, like=1).first()
+        u = Interactions.query.filter_by(
+            user_id=user.id, song_id=song.id, like=1).first()
         if u:
             db.session.delete(u)
             db.session.commit()
@@ -391,7 +403,8 @@ def liked(user_id, song_id):
 
 @app.route('/uploaddataset')
 def uploaddataset():
-    genre = ['garhwali','ghazal','sufi','bollywood_rap','bollywood_romantic','bhojpuri','bhajan']
+    genre = ['garhwali', 'ghazal', 'sufi', 'bollywood_rap',
+             'bollywood_romantic', 'bhojpuri', 'bhajan']
     for g in genre:
         count = 0
         for filename in os.listdir(f'Dataset\\{g}'):
@@ -407,7 +420,7 @@ def uploaddataset():
                 hours, mins, seconds = convert(length_in_secs)
                 duration = f"{mins}:{seconds}"
                 new_song = Songs(name=name, path=path, artist=artist, genre=genre,
-                                cover_photo=coverphoto, duration=duration)
+                                 cover_photo=coverphoto, duration=duration)
                 db.session.add(new_song)
                 count = count+1
         db.session.commit()
@@ -422,7 +435,8 @@ def save_excel(form_excel):
     form_excel.save(excel_path)
     return excel_fn
 
-@app.route('/uploaduserdata',methods = ['GET','POST'])
+
+@app.route('/uploaduserdata', methods=['GET', 'POST'])
 def uploaduserdata():
     if request.method == "POST":
         sheet = request.files['Excel']
@@ -432,7 +446,8 @@ def uploaduserdata():
         # Load one worksheet.
         ws = wb['data']
         all_rows = list(ws.rows)
-        genres = ['bhojpuri','sufi','bollywood_rap','bollywood_romantic','bhajan','ghazal','garhwali']
+        genres = ['bhojpuri', 'sufi', 'bollywood_rap',
+                  'bollywood_romantic', 'bhajan', 'ghazal', 'garhwali']
         # Pull information from specific cells.
         for row in all_rows[2:]:
             fullname = row[0].value
@@ -441,103 +456,112 @@ def uploaduserdata():
             pref = random.sample(genres, 3)
             preference1 = pref[0]
             preference2 = pref[1]
-            preference3 = pref[2]            
-            user = Users.query.filter_by(username = username).first()
+            preference3 = pref[2]
+            user = Users.query.filter_by(username=username).first()
             if user:
                 pass
             else:
-                newuser = Users(username = username,password='sha256$cBl7wrlwRwy9QHJB$7a873cb0e1cd6cd2070c00147540fc6ba209e9114152385c94e06fb641951076', mail_id = email, preference1 = preference1, preference2 = preference2, preference3 = preference3)
+                newuser = Users(username=username, password='sha256$cBl7wrlwRwy9QHJB$7a873cb0e1cd6cd2070c00147540fc6ba209e9114152385c94e06fb641951076',
+                                mail_id=email, preference1=preference1, preference2=preference2, preference3=preference3)
                 db.session.add(newuser)
 
-        db.session.commit()        
-        return "Data Added"        
-    return render_template('uploaduserdata.html') 
-    
+        db.session.commit()
+        return "Data Added"
+    return render_template('uploaduserdata.html')
 
-@app.route('/uploadlikes',methods = ['GET'])
+
+@app.route('/uploadlikes', methods=['GET'])
 def uploadlikes():
     users = Users.query.all()
     for user in users:
         if user.preference1 == "garhwali" or user.preference2 == "garhwali" or user.preference3 == "garhwali":
             for i in range(5):
-                song_id = random.randrange(1,91)
-                listen_count = random.randrange(1,1000)
-                like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
-                song = Songs.query.filter_by(id = song_id).first()
+                song_id = random.randrange(1, 91)
+                listen_count = random.randrange(1, 1000)
+                like = Interactions(
+                    user_id=user.id, song_id=song_id, like=1, listen_count=listen_count)
+                song = Songs.query.filter_by(id=song_id).first()
                 song.total_listen_count = song.total_listen_count + listen_count
                 song.total_likes = song.total_likes + 1
                 db.session.add(like)
                 db.session.commit()
         if user.preference1 == "ghazal" or user.preference2 == "ghazal" or user.preference3 == "ghazal":
             for i in range(5):
-                song_id = random.randrange(91,185)
-                listen_count = random.randrange(1,1000)
-                like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count)
-                song = Songs.query.filter_by(id = song_id).first()
+                song_id = random.randrange(91, 185)
+                listen_count = random.randrange(1, 1000)
+                like = Interactions(
+                    user_id=user.id, song_id=song_id, like=1, listen_count=listen_count)
+                song = Songs.query.filter_by(id=song_id).first()
                 song.total_listen_count = song.total_listen_count + listen_count
-                song.total_likes = song.total_likes + 1 
+                song.total_likes = song.total_likes + 1
                 db.session.add(like)
                 db.session.commit()
         if user.preference1 == "bhajan" or user.preference2 == "bhajan" or user.preference3 == "bhajan":
             for i in range(5):
-                song_id = random.randrange(515,563)
-                listen_count = random.randrange(1,1000)
-                like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
-                song = Songs.query.filter_by(id = song_id).first()
+                song_id = random.randrange(515, 563)
+                listen_count = random.randrange(1, 1000)
+                like = Interactions(
+                    user_id=user.id, song_id=song_id, like=1, listen_count=listen_count)
+                song = Songs.query.filter_by(id=song_id).first()
                 song.total_listen_count = song.total_listen_count + listen_count
-                song.total_likes = song.total_likes + 1 
+                song.total_likes = song.total_likes + 1
                 db.session.add(like)
                 db.session.commit()
         if user.preference1 == "bhojpuri" or user.preference2 == "bhojpuri" or user.preference3 == "bhojpuri":
             for i in range(5):
-                song_id = random.randrange(440,515)
-                listen_count = random.randrange(1,1000)
-                like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
-                song = Songs.query.filter_by(id = song_id).first()
+                song_id = random.randrange(440, 515)
+                listen_count = random.randrange(1, 1000)
+                like = Interactions(
+                    user_id=user.id, song_id=song_id, like=1, listen_count=listen_count)
+                song = Songs.query.filter_by(id=song_id).first()
                 song.total_listen_count = song.total_listen_count + listen_count
-                song.total_likes = song.total_likes + 1 
+                song.total_likes = song.total_likes + 1
                 db.session.add(like)
                 db.session.commit()
         if user.preference1 == "bollywood_rap" or user.preference2 == "bollywood_rap" or user.preference3 == "bollywood_rap":
             for i in range(5):
-                song_id = random.randrange(259,359)
-                listen_count = random.randrange(1,1000)
-                like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
-                song = Songs.query.filter_by(id = song_id).first()
+                song_id = random.randrange(259, 359)
+                listen_count = random.randrange(1, 1000)
+                like = Interactions(
+                    user_id=user.id, song_id=song_id, like=1, listen_count=listen_count)
+                song = Songs.query.filter_by(id=song_id).first()
                 song.total_listen_count = song.total_listen_count + listen_count
-                song.total_likes = song.total_likes + 1 
+                song.total_likes = song.total_likes + 1
                 db.session.add(like)
                 db.session.commit()
         if user.preference1 == "bollywood_romantic" or user.preference2 == "bollywood_romantic" or user.preference3 == "bollywood_romantic":
             for i in range(5):
-                song_id = random.randrange(359,440)
-                listen_count = random.randrange(1,1000)
-                like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
-                song = Songs.query.filter_by(id = song_id).first()
-                song.total_listen_count =  song.total_listen_count +listen_count
-                song.total_likes = song.total_likes + 1 
+                song_id = random.randrange(359, 440)
+                listen_count = random.randrange(1, 1000)
+                like = Interactions(
+                    user_id=user.id, song_id=song_id, like=1, listen_count=listen_count)
+                song = Songs.query.filter_by(id=song_id).first()
+                song.total_listen_count = song.total_listen_count + listen_count
+                song.total_likes = song.total_likes + 1
                 db.session.add(like)
                 db.session.commit()
         if user.preference1 == "sufi" or user.preference2 == "sufi" or user.preference3 == "sufi":
             for i in range(5):
-                song_id = random.randrange(185,259)
-                listen_count = random.randrange(1,1000)
-                like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
-                song = Songs.query.filter_by(id = song_id).first()
-                song.total_listen_count =  song.total_listen_count +listen_count
+                song_id = random.randrange(185, 259)
+                listen_count = random.randrange(1, 1000)
+                like = Interactions(
+                    user_id=user.id, song_id=song_id, like=1, listen_count=listen_count)
+                song = Songs.query.filter_by(id=song_id).first()
+                song.total_listen_count = song.total_listen_count + listen_count
                 song.total_likes = song.total_likes + 1
                 db.session.add(like)
-                db.session.commit()       
+                db.session.commit()
         for i in range(5):
-            song_id = random.randrange(1,563)
-            listen_count = random.randrange(1,1000)
-            like = Interactions(user_id = user.id, song_id = song_id, like = 1, listen_count = listen_count) 
-            song = Songs.query.filter_by(id = song_id).first()
-            song.total_listen_count =  song.total_listen_count +listen_count
+            song_id = random.randrange(1, 563)
+            listen_count = random.randrange(1, 1000)
+            like = Interactions(user_id=user.id, song_id=song_id,
+                                like=1, listen_count=listen_count)
+            song = Songs.query.filter_by(id=song_id).first()
+            song.total_listen_count = song.total_listen_count + listen_count
             song.total_likes = song.total_likes + 1
             db.session.add(like)
             db.session.commit()
-    return "Data Added"    
+    return "Data Added"
 
 
 if __name__ == "__main__":
