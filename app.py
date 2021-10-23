@@ -181,7 +181,7 @@ def logout():
         if session['current_song']:
             session['current_song'] = None
     except:
-        pass        
+        pass
     flash("Successfully Logged out!")
     return redirect('/login')
 
@@ -218,8 +218,15 @@ def allsonglist():
     for i in pop_df['name'].tolist():
         song = Songs.query.filter_by(name=i).first()
         pop_songs.append(song)
-    print(pop_songs)
-    return render_template('allsonglist.html', songs=songs, pop_songs=pop_songs, song_id=current_song_id)
+    pick_songs = []
+    user = Users.query.filter_by(id=current_user.id).first()
+    preferences = [user.preference1, user.preference2, user.preference3]
+    songs = Songs.query.order_by(
+        Songs.total_listen_count.desc()).limit(50).all()
+    for song in songs:
+        if song.genre in preferences:
+            pick_songs.append(song)
+    return render_template('allsonglist.html', songs=songs, pop_songs=pop_songs, song_id=current_song_id, pick_songs=pick_songs)
 
 
 @app.route('/likedsonglist', methods=['POST', 'GET'])
