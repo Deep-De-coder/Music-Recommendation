@@ -64,7 +64,7 @@ def print_similar_songs(song_df, song_id, top_indexes):
 
 
 def recommend_songs(song_id):
-    k = 50
+    k = 25
     song_id = int(song_id)
     top_n = 18
     sliced = V.T[:, :k]  # representative data
