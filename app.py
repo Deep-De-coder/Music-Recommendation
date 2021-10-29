@@ -197,7 +197,7 @@ def index():
 def dashboard(song_id):
     song = Songs.query.filter_by(id=song_id).first()
     liked_song = Interactions.query.filter_by(
-        user_id=current_user.id, song_id=song_id).first()
+        user_id=current_user.id, song_id=song_id,like=1).first()
 
     reco_songs = []
     songs = model.recommend_songs(song_id)
@@ -234,7 +234,7 @@ def allsonglist():
 def likedsonglist():
     songs = []
     current_song_id = session.get("current_song", None)
-    liked_songs = Interactions.query.filter_by(user_id=current_user.id).all()
+    liked_songs = Interactions.query.filter_by(user_id=current_user.id,like=1).all()
     for l in liked_songs:
         song = Songs.query.filter_by(id=l.song_id).first()
         songs.append(song)
@@ -252,7 +252,7 @@ def search():
         search = search+'%'
         current_song_id = session.get("current_song", None)
         results = Songs.query.filter(
-            or_(Songs.name.like(search), Songs.artist.like(search))).all()
+            or_(Songs.name.like(search), Songs.artist.like(search), Songs.genre.like(search))).all()
         if len(results) == 0:
             flash("No such song availabe!")
         return render_template('search.html', results=results, song_id=current_song_id)
